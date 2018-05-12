@@ -6,27 +6,14 @@
 // @match        https://hackforums.net/private.php?action=send*
 // @match        https://hackforums.net/private.php?action=read*
 // @require      https://github.com/openpgpjs/openpgpjs/raw/master/dist/openpgp.min.js
+// @resource     MainCSS https://github.com/josefandersson/HF-Encrypted-PMs/raw/master/style.css
+// @grant        GM_getResourceText
 // @grant        GM_addStyle
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
 
-GM_addStyle(`
-.encryptMessageButton[mode="good"] { background-color: #56ab56 !important; border-color: #046d04 !important; color: #053105 !important; }
-.encryptMessageButton[mode="bad"] { background-color: #af4444 !important; border-color: #820707 !important; color: #290303 !important; }
-.encryptMessageButton[mode="middle"] { background-color: #dada00 !important; border-color: #d8d88e !important; color: #444400 !important; }
-.encryptMessageButton:disabled { background-color: #565656 !important; border-color: #484848 !important; }
-.encryptMessageButton[mode="good"]:after { content: 'Encrypt Message'; }
-.encryptMessageButton[mode="bad"]:after { content: 'Generate Key Request Message'; }
-.encryptMessageButton[mode="middle"]:after { content: 'Revert'; }
-.encryptMessageButton:disabled:after { content: 'Unavailable'; }
-#encryptionInfo { margin:5px 0; }
-#content > div > form > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(6) > td:nth-child(2) > div > textarea:disabled { opacity: 0.7; background-color: #999; }
-.hfEncPM { z-index: 1000; background-color: rgba(0,0,0,0.7); position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; }
-.hfEncPM > div { background-color: white; width: 350px; height: 80%; max-height: 300px; transform: translate(-50%, -50%); top: 50%; left: 50%; position: fixed; color: black; overflow-y: auto; padding: 0 5px 15px 5px; }
-.hfEncPM input { background-color: #cad8ff; padding: 10px; border: 1px solid #333; width: 300px; }
-.hfEncPM button { border: 1px solid #333; background-color: white; padding: 5px 10px 7px 10px; margin: 0 2px; }
-.hfEncPM button:first-of-type { background-color: #88ffb1; }`);
+GM_addStyle(GM_getResourceText('MainCSS'));
 
 
 const regexPublicKey = /-----BEGIN PGP PUBLIC KEY BLOCK-----(?:.|\s)*-----END PGP PUBLIC KEY BLOCK-----/m;
@@ -153,23 +140,25 @@ function buttonClickEvent(ev) {
     if (hasBeenChanged) {
         revertTextarea();
     } else {
-        hasBeenChanged = true;
-        textarea.disabled = true;
-        previousData = textarea.value;
-
         if (!publicKey) {
             getKeys().then(keys => {
+                hasBeenChanged = true;
+                textarea.disabled = true;
+                previousData = textarea.value;
                 textarea.value = `Hello. I would like to have a private conversation with you!\n\nPlease install the HF Encrypted PMs userscript http://*****.***/\nand then reload this page.\n\n${keys.publicKey}`;
                 buttonElement.setAttribute('mode', 'middle');
             }).catch(err => console.log(err));
         } else {
-            let doneWaiting = displayWait('Encrypting message... This should only take a few seconds.');
+            //let doneWaiting = displayWait('Encrypting message... This should only take a few seconds.');
             encrypt(textarea.value, getRecipientPublicKey()).then(encryptedMessage => {
-                doneWaiting();
+                //doneWaiting();
+                hasBeenChanged = true;
+                textarea.disabled = true;
+                previousData = textarea.value;
                 textarea.value = `This message was sent using the HF Encrypted PMs userscript http://*****.***/.\n\n${encryptedMessage}`;
                 buttonElement.setAttribute('mode', 'middle');
             }).catch(err => {
-                doneWaiting();
+                //doneWaiting();
                 console.log('Encryption failed:', err);
             })
         }
