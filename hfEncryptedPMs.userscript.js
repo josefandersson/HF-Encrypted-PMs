@@ -1,8 +1,12 @@
 // ==UserScript==
 // @name         Hackforums Encrypted PMs
-// @version      1
-// @description  Encrypt your PMs with PGP encryption.
+// @namespace    hfEncPM
+// @version      2
 // @author       DrDoof
+// @description  Encrypt your PMs with PGP encryption.
+// @homepage     https://github.com/josefandersson/HF-Encrypted-PMs
+// @updateURL    https://raw.githubusercontent.com/josefandersson/HF-Encrypted-PMs/master/hfEncryptedPMs.userscript.js
+// @downloadURL  https://raw.githubusercontent.com/josefandersson/HF-Encrypted-PMs/master/hfEncryptedPMs.userscript.js
 // @match        https://hackforums.net/private.php*
 // @require      https://github.com/openpgpjs/openpgpjs/raw/master/dist/openpgp.min.js
 // @resource     MainCSS https://github.com/josefandersson/HF-Encrypted-PMs/raw/master/style.css
@@ -11,8 +15,6 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
-
-
 
 const regexPublicKey = /-----BEGIN PGP PUBLIC KEY BLOCK-----(?:.|\s)*-----END PGP PUBLIC KEY BLOCK-----/m;
 const regexMessage = /-----BEGIN PGP MESSAGE-----(?:.|\s)*-----END PGP MESSAGE-----/m;
