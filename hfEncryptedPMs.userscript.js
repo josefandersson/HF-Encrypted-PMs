@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         Hackforums Encrypted PMs
 // @namespace    hfEncPM
-// @version      2
+// @version      1.0.0
+// @license      MIT
 // @author       DrDoof
 // @description  Encrypt your PMs with PGP encryption.
 // @homepage     https://github.com/josefandersson/HF-Encrypted-PMs
-// @updateURL    https://raw.githubusercontent.com/josefandersson/HF-Encrypted-PMs/master/hfEncryptedPMs.userscript.js
-// @downloadURL  https://raw.githubusercontent.com/josefandersson/HF-Encrypted-PMs/master/hfEncryptedPMs.userscript.js
+// @updateURL    https://openuserjs.org/meta/DrDoof/hfEncryptedPMs.meta.js
+// @downloadURL  https://openuserjs.org/src/scripts/DrDoof/hfEncryptedPMs.user.js
 // @match        https://hackforums.net/private.php*
 // @require      https://github.com/openpgpjs/openpgpjs/raw/master/dist/openpgp.min.js
 // @resource     MainCSS https://github.com/josefandersson/HF-Encrypted-PMs/raw/master/style.css
