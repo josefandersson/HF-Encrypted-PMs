@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hackforums Encrypted PMs
 // @namespace    hfEncPM
-// @version      1.0.3
+// @version      1.0.4
 // @license      MIT
 // @copyright    2018, DrDoof (https://openuserjs.org/users/DrDoof)
 // @author       DrDoof
@@ -76,18 +76,27 @@ class Page {
                 revertTextarea();
             else {
                 if (page.recipientPublicKey) {
-                    keychain.encrypt(page.getTextareaElement().value, page.recipientPublicKey).then(encryptedMessage => {
+                    let user = page.getRecipientUser();
+                    keychain.encrypt(page.getTextareaElement().value, user.publicKey).then(encryptedMessage => {
                         hasBeenChanged = true;
                         page.getTextareaElement().setAttribute('disabled', true);
                         previousData = page.getTextareaElement().value;
-                        page.getTextareaElement().value = `This message was sent using the HF Encrypted PMs userscript ${userscriptURL} .\n\n${encryptedMessage}`;
-                        page.buttonElement.setAttribute('mode', 'middle');
+                        if (!user.sharedWith) {
+                            keychain.getKeys().then(keys => {
+                                user.sharedWith = true;
+                                keychain.saveUser(user);
+                                page.getTextareaElement().value = `Hello. I would like to have a private conversation with you!\n\nPlease install the HF Encrypted PMs userscript ${userscriptURL} and then reload this page.\n\n${keys.publicKey}\n\n${encryptedMessage}`;
+                                page.buttonElement.setAttribute('mode', 'middle');
+                            }).catch(err => console.log(err));
+                        } else {
+                            page.getTextareaElement().value = `This message was sent using the HF Encrypted PMs userscript ${userscriptURL} .\n\n${encryptedMessage}`;
+                            page.buttonElement.setAttribute('mode', 'middle');
+                        }
                     }).catch(err => {
                         display.alert('Encryption failed: ' + err);
                         console.log(err);
                     });
                 } else {
-                    console.log('exciting');
                     keychain.getKeys().then(keys => {
                         hasBeenChanged = true;
                         page.getTextareaElement().setAttribute('disabled', true);
@@ -181,8 +190,6 @@ class Page {
         this.message = document.querySelector('#pid_').innerText;
         this.sender  = document.querySelector('#post_ > div.post_author > div.author_information > strong').innerText;
 
-        console.log('Sender', this.sender, 'Message', this.message);
-
         let regexResults = regexPublicKey.exec(this.message);
         if (regexResults) {
             keychain.saveUser({ sharedWith: false, publicKey: regexResults[0], username: this.sender, uid: /uid=([0-9]*)/.exec(document.querySelector('#post_ > div.post_author > div.author_information > strong > span > a').href)[1] });
@@ -205,14 +212,18 @@ class Page {
         return document.querySelectorAll('.select2-search-choice').length;
     }
 
-    getRecipientPublicKey() {
+    getRecipientUser() {
         if (this.getNumRecipients() === 1) {
             let recipient = document.querySelector('.select2-search-choice > div').innerText;
-            let user = keychain.getUser(recipient);
-            if (user) return user.publicKey;
-            else      return null;
+            return keychain.getUser(recipient);
         }
         return null;
+    }
+
+    getRecipientPublicKey() {
+        let user = this.getRecipientUser();
+        if (user) return user.publicKey;
+        else      return null;
     }
 }
 
