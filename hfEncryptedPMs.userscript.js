@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name         Hackforums Encrypted PMs
 // @namespace    hfEncPM
-// @version      1.0.0
+// @version      1.0.1
 // @license      MIT
+// @copyright    2018, DrDoof (https://openuserjs.org/users/DrDoof)
 // @author       DrDoof
 // @description  Encrypt your PMs with PGP encryption.
 // @homepage     https://github.com/josefandersson/HF-Encrypted-PMs
