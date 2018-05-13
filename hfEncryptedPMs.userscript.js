@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hackforums Encrypted PMs
 // @namespace    hfEncPM
-// @version      1.0.2
+// @version      1.0.3
 // @license      MIT
 // @copyright    2018, DrDoof (https://openuserjs.org/users/DrDoof)
 // @author       DrDoof
@@ -314,7 +314,7 @@ class Keychain {
     }
 
     hasKeys() {
-        return GM_getValue('keys') !== null;
+        return (GM_getValue('keys') != null);
     }
 
     hasSharedWithUser(username) {
